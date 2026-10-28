@@ -130,12 +130,12 @@ def main() -> int:
 
         _s1 = _StubLLM(["哦材料力学的虚功原理，", "虚功原理是外力虚功等于内力虚功。"])
         _out1 = __import__("asyncio").run(
-            Brain(cfg, store, _s1).handle(Inbound("test", "half-1", "group", "u1", "晓墨", "虚功原理是什么", mentioned=True))
+            Brain(cfg, store, _s1).handle(Inbound("test", "half-1", "group", "u1", "群主", "虚功原理是什么", mentioned=True))
         ) or ""
         check("半句会被补全", "等于内力虚功" in _out1 and _s1.calls == 2, f"{_out1} / {_s1.calls} 次")
         _s2 = _StubLLM(["哦材料力学的虚功原理，"])
         _out2 = __import__("asyncio").run(
-            Brain(cfg, store, _s2).handle(Inbound("test", "half-2", "group", "u1", "晓墨", "虚功原理是什么", mentioned=True))
+            Brain(cfg, store, _s2).handle(Inbound("test", "half-2", "group", "u1", "群主", "虚功原理是什么", mentioned=True))
         ) or ""
         check("补不动就补句号", _out2.endswith("。") and not _out2.endswith("，"), _out2)
 
@@ -169,11 +169,11 @@ def main() -> int:
         # 群友固定称呼：config 写在最前，其次是自报，最后才兜底「群友后四位」
         from fatfish import names as _nm
 
-        store.kv_set(_nm.nick_key("selfuid"), "小椰")
+        store.kv_set(_nm.nick_key("selfuid"), "小绿")
         _cfg_names = {"channels": {"qq": {"member_names": {"UID-FIXED-1": "小明"}}}}
         check("config 里的名字优先", _nm.resolve(store, _cfg_names, "UID-FIXED-1") == "小明",
               _nm.resolve(store, _cfg_names, "UID-FIXED-1"))
-        check("自报名字次之", _nm.resolve(store, cfg, "selfuid") == "小椰", _nm.resolve(store, cfg, "selfuid"))
+        check("自报名字次之", _nm.resolve(store, cfg, "selfuid") == "小绿", _nm.resolve(store, cfg, "selfuid"))
         check("没名字才用群友后四位", _nm.resolve(store, cfg, "ZZZZ1234") == "群友1234",
               _nm.resolve(store, cfg, "ZZZZ1234"))
         _r_name = __import__("asyncio").run(
@@ -189,24 +189,24 @@ def main() -> int:
         ) or ""
         check("问「我是谁」不乱起名", "蛙蛙" in _r_who and "谁呀" not in _r_who, _r_who[:14])
 
-        # 主人预挂名字：6289 是小羊 → 那人一开口就自动认领
+        # 主人预挂名字：6289 是小明 → 那人一开口就自动认领
         import copy as _copy_master
 
         _cfg_master = _copy_master.deepcopy(cfg)
         _cfg_master.setdefault("persona", {})["master_ids"] = ["MASTER-FIXED"]
         _brain_master = Brain(_cfg_master, store, llm)
         _r_bind = __import__("asyncio").run(
-            _brain_master.handle(Inbound("test", "bind", "group", "MASTER-FIXED", "主人", "6289是小羊", mentioned=True))
+            _brain_master.handle(Inbound("test", "bind", "group", "MASTER-FIXED", "主人", "6289是小明", mentioned=True))
         ) or ""
-        check("主人能预挂名字", "6289" in _r_bind and "小羊" in _r_bind, _r_bind[:20])
+        check("主人能预挂名字", "6289" in _r_bind and "小明" in _r_bind, _r_bind[:20])
         from fatfish.channels.qq import QQChannel as _QQC
 
         _qc_bind = _QQC(cfg, lambda m: None, store)
         _uid_6289 = "ABCDEF0123456789ABCDEF416289"
         _claimed = _qc_bind.member_name(_uid_6289)
-        check("待认领的人开口就变名字", _claimed == "小羊" and _nm.self_named(store, _uid_6289) == "小羊", _claimed)
+        check("待认领的人开口就变名字", _claimed == "小明" and _nm.self_named(store, _uid_6289) == "小明", _claimed)
         _r_bind2 = __import__("asyncio").run(
-            brain.handle(Inbound("test", "bind", "group", "notmaster", "路人", "1234是小羊", mentioned=True))
+            brain.handle(Inbound("test", "bind", "group", "notmaster", "路人", "1234是小明", mentioned=True))
         ) or ""
         check("非主人不能预挂名字", "1234" not in _r_bind2, _r_bind2[:20])
 
@@ -437,7 +437,7 @@ def main() -> int:
     # 6.4) 提示词里的时间：给出北京时间 + 禁止自己编「时差」
     from fatfish.persona import build_system_prompt as _bsp
 
-    _ptxt = _bsp(cfg, scene="群聊", speaker="晓墨", channel="qq", is_master=True)
+    _ptxt = _bsp(cfg, scene="群聊", speaker="群主", channel="qq", is_master=True)
     check("提示词带北京时间", "北京时间 UTC+8" in _ptxt, "")
     check("提示词禁止臆造时差", "时差" in _ptxt and "早上好" in _ptxt, "")
 
@@ -548,7 +548,7 @@ def main() -> int:
     check("人格长度合理（2000~8000 字）", 2000 <= len(_ptext) <= 8000, f"{len(_ptext)} 字")
     from fatfish.persona import build_system_prompt as _bsp
 
-    _sys = _bsp(cfg, scene="水群", speaker="akane", channel="qq")
+    _sys = _bsp(cfg, scene="水群", speaker="小红", channel="qq")
     check("提示词有反照抄约束", "一个字都不要照抄" in _sys, "")
     check("提示词每轮带编号（防复读）", "本轮编号" in _sys, "")
     check("提示词带本轮语气", "这一轮的说话方式" in _sys, "")

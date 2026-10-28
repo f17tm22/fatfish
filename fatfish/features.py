@@ -139,7 +139,7 @@ def try_feature(brain: "Brain", inbound: "Inbound") -> Optional[str]:
             if key and reply and key.lower() in lower:
                 return reply
 
-    # 主人点人：说「6289 是小羊」/「绑定 小羊 6289」，等他下次开口自动认领
+    # 主人点人：说「6289 是小明」/「绑定 小明 6289」，等他下次开口自动认领
     if brain.is_master(inbound):
         m_bind = (
             _re.match(r"^绑定\s*([\w\u4e00-\u9fa5]{1,12})\s*([A-Za-z0-9]{4,32})$", text)
@@ -156,7 +156,7 @@ def try_feature(brain: "Brain", inbound: "Inbound") -> Optional[str]:
     if has("我叫什么", "我是谁", "认得我吗", "知道我是谁"):
         return f"你是{nm.resolve(brain.store, cfg, uid)}呀，本鱼记着呢（甩尾）。"
 
-    # 自报名字：本人说一句「我是 akane」就把 openid 和名字绑死
+    # 自报名字：本人说一句「我是 小红」就把 openid 和名字绑死
     m_name = _re.match(r"^(?:我是|我叫|叫我)\s*([\w\u4e00-\u9fa5]{1,12})$", text)
     if m_name and m_name.group(1) not in ("谁", "什么", "哪个", "哪位"):
         want = m_name.group(1).strip()

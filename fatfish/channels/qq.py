@@ -376,7 +376,7 @@ class QQChannel(Channel):
         uid = str(member_openid or "")
         store = getattr(self, "store", None)
         if store is not None:
-            # 主人说过「6289 是小羊」但当时还没见过完整 openid：等人一开口就认领
+            # 主人说过「6289 是小明」但当时还没见过完整 openid：等人一开口就认领
             waiting = names.pending_for(store, uid)
             if waiting and not names.self_named(store, uid):
                 names.bind(store, uid, waiting)

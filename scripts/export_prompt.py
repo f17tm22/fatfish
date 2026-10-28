@@ -41,7 +41,7 @@ def build(cfg: dict, root: Path, title: str) -> str:
     add("## 1. 拼装后的 system prompt（群聊场景，主人本人）")
     add("")
     add("```text")
-    add(persona_mod.build_system_prompt(cfg, scene="群聊", speaker="晓墨", channel="qq", is_master=True))
+    add(persona_mod.build_system_prompt(cfg, scene="群聊", speaker="群主", channel="qq", is_master=True))
     add("```")
     add("")
 

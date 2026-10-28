@@ -2,7 +2,7 @@
 
 QQ 群事件只给 member_openid，没有昵称。优先级：
   1) config 的 `channels.qq.member_names`（手动写死，最稳）
-  2) sqlite kv 里的 `nick:{openid}`（本人说「我是 akane」自报，或调参台里改）
+  2) sqlite kv 里的 `nick:{openid}`（本人说「我是 小红」自报，或调参台里改）
   3) 兜底 `群友{openid 后 4 位}`
 """
 
@@ -64,7 +64,7 @@ def owner_of(store, cfg: Dict[str, Any], name: str) -> Optional[str]:
     return None
 
 
-PENDING_PREFIX = "pendname:"   # 主人说「6289 是小羊」但那个 openid 还没见过 → 先挂着，等他说话自动认领
+PENDING_PREFIX = "pendname:"   # 主人说「6289 是小明」但那个 openid 还没见过 → 先挂着，等他说话自动认领
 
 
 def set_pending(store, suffix: str, name: str) -> None:
