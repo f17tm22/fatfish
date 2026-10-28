@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+data/
+logs/
+profiles/
+stickers/
+notify_jobs.yaml
+*.bak-*
+*.pyc
+__pycache__/
+.DS_Store
+config.yaml

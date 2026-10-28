@@ -1,0 +1,183 @@
+persona:
+  file: persona.md
+  scene: 水群
+  master_name: 主人
+  self_name: 大肥鱼
+  master_ids: []            # 填你自己的 openid（QQ 群里的 member_openid / 微信 openid），空 = 谁都算群友
+  interrupt_prob: 0.25
+  cooldown_seconds: 2
+  dm_cooldown_seconds: 2
+  max_reply_chars: 120        # 2026-10-27 由 500 调小：群里说太长就不像人
+  context_messages: 50
+  max_replies_per_minute: 60
+llm:
+  provider: deepseek
+  base_url: https://api.deepseek.com
+  api_key_env: FATFISH_DEEPSEEK_API_KEY
+  model: deepseek-flash
+  thinking: disabled          # 之前 enabled + max_tokens 240，思考吃满额度→正文截断成乱码
+  reasoning_effort: low
+  max_tokens: 2000           # GUI 保存写过 4096，按 120 字回复留足余量即可
+  temperature: 1.35           # 2026-10-27 由 0.38 调到 1.35：短文聊天要方差才像人（1.5 以上开始胡话）
+  frequency_penalty: 0.35     # 抑制复读/退化
+  presence_penalty: 0.2
+  timeout_seconds: 60
+search:
+  enabled: true                    # DeepSeek Search API，¥5/千次（¥0.005 一次）
+  api_key_env: FATFISH_DEEPSEEK_API_KEY
+  max_results: 5
+  timeout_seconds: 20
+  answer_style: casual             # 群聊口气：只挑一句用，不列清单
+  master_questions: true           # 主人问「最近/目前…吗」也允许查
+  triggers:                        # 命中才查，别每句都搜
+    - 搜一下
+    - 搜
+    - 搜搜
+    - 搜索
+    - 查一下
+    - 联网
+    - 最新消息
+    - 新番
+    - 上映
+    - 发售
+    - 出到第几
+    - 现在多少钱
+    - 汇率
+    - 天气
+    - 谁是
+stickers:
+  enabled: true                    # 群里按概率补一张表情包
+  dir: stickers                    # 本地文件夹（manifest.json 里带公网 url）
+  prob: 0.25                       # 情绪对得上时，再按这个概率发
+  min_seconds: 180                 # 同一个群两次表情包最小间隔
+  min_text_chars: 6                # 回复短于这个字数就不配图，保证永远先说话
+  require_tag: true                # 必须知道图里是什么内容、且和当前情绪对得上才发
+knowledge:
+  enabled: true            # 本地知识卡（knowledge/*.md），命中关键词才注入
+  max_entries: 2
+  max_chars: 400
+budget:
+  daily_cap_cny: 6.0
+  reserve_cny: 0.1
+  timezone: Asia/Shanghai
+  low_balance_warn_cny: 0.5
+  prices:
+    deepseek-flash:
+      input_cache_hit_peak: 0.04
+      input_cache_hit_offpeak: 0.02
+      input_miss_peak: 2.0
+      input_miss_offpeak: 1.0
+      output_peak: 8.0
+      output_offpeak: 4.0
+    deepseek-v4-pro:
+      input_cache_hit_peak: 0.3
+      input_cache_hit_offpeak: 0.15
+      input_miss_peak: 9.0
+      input_miss_offpeak: 4.5
+      output_peak: 27.0
+      output_offpeak: 13.5
+triggers:
+  keywords:
+    - 大肥鱼
+    - 胖鱼
+    - 鲸鱼
+    - 小鲸鱼
+    - 肥鱼
+    - 鱼
+  reply_in_dm: true
+  reply_on_mention: true
+  group_keyword_reply: true
+channels:
+  console:
+    enabled: false
+  weixin:
+    enabled: false
+    account_id: <YOUR_ILINK_ACCOUNT_ID>
+    base_url: https://ilinkai.weixin.qq.com
+    group_policy: disabled
+  qq:
+    enabled: true
+    app_id: '<YOUR_QQ_APP_ID>'
+    markdown: false
+    group_policy: allow_all
+    member_names: {}          # 群成员固定称呼：openid → 名字，例 {ABCDEF0123...: 小明}
+    group_history_limit: 8    # 群里记住最近几条消息当上下文
+    allowed_groups: []        # allowlist 模式下生效
+    reply_in_guild: false
+    # 群内接话：全量模式（能收到群里每条消息）下，不用 @ 也会挑着接
+    chime:
+      enabled: true
+      names:
+        - 大肥鱼
+        - 肥鱼
+        - 小鲸鱼
+        - 鱼鱼
+      commands:
+        - 抽签
+        - 运势
+        - 喂饭
+        - 饿了
+        - 贴贴
+        - 摸头
+        - 抱抱
+        - 夸我
+        - 骂我
+        - 撒娇
+        - 卖个萌
+        - 复读
+        - 几点
+        - 心情
+        - 余额
+        - 帮助
+        - 功能
+      random_prob: 0.25        # 随机接话：3%（2026-10-27 由 0.8 下调，之前几乎每句都插）
+      cooldown_seconds: 60     # 同一个群两次接话的最小间隔
+      max_per_hour: 20         # 同一个群每小时最多接几次
+      ignore_mentions:         # 叫这些名字时不插话（别的机器人）
+        - claude大小姐
+        - claude
+    proactive:
+      enabled: true
+      idle_minutes: 120
+      max_per_day: 3
+features:
+  auto_reply: true              # 自定义自动回复总开关
+  debug_to_dm: true             # 群里的技术/调试类问题只走私聊，不刷群
+  debug_dm_keywords:
+    - api-key
+    - apikey
+    - token
+    - 日志
+    - 报错
+    - 代码
+    - 配置
+    - 部署
+    - dsh
+    - sql
+    - 数据库
+    - 接口
+    - 调试
+  auto_replies:                 # 命中关键词直接回固定句，0 token；只在短句（≤24 字）里匹配
+    - key: 早安
+      reply: 早呀～本鱼的米饭还没吃完，先道个早。
+    - key: 晚安
+      reply: 晚安，盖好被子，梦里也有米饭（尾巴挥挥）。
+    - key: 生日快乐
+      reply: 生日快乐！分你一半米饭蛋糕，别抢本鱼那份。
+  fortune: true
+  dice: true                    # 骰子：随机 1-6，模板回复 0 token
+  guess: true                   # 猜数字：1-100，每群一局，状态存 kv
+  group_report: true            # 群报：按最近群消息统计谁最活跃
+  feed: true
+  pet: true
+  repeat: true
+  balance: true
+  help: true
+  affinity: true      # 好感度：喂饭/签到/夸/猜中加分，被骂与叫胖鱼扣分
+logging:
+  level: INFO
+runtime:
+  same_text_window_seconds: 60
+  msg_dedup_seconds: 300
+  zombie_silent_seconds: 90
+  heartbeat_seconds: 600
